@@ -1,0 +1,13 @@
+networks:
+  macvlan_net:
+    name: macvlan_net
+    driver: macvlan
+    enable_ipv6: true
+    driver_opts:
+      parent: eth0
+    ipam:
+      config:
+        - subnet: "<192.168.0.0/24 or 192.168.0.0/16>"
+          gateway: "<router ip>"
+        - subnet: "<fd00::/64 or fc00::/64 for ULA>"
+          gateway: "<fd00::1 or fc00::1 for ULA>"

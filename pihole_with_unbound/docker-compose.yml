@@ -1,0 +1,48 @@
+services:
+
+  unbound:
+    container_name: unbound
+    image: klutchell/unbound:latest
+    hostname: unbound
+    networks:
+      macvlan_net:
+        ipv4_address: <static ip for unbound>
+    volumes:
+      - './unbound:/etc/unbound/custom.conf.d'
+    cap_add:
+      - NET_BIND_SERVICE
+    restart: unless-stopped
+
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    hostname: pihole
+    networks:
+      macvlan_net:
+        ipv4_address: <static ip for pihole>
+        ipv6_address: <static ipv6 for pihole - ULA>
+    environment:
+      TZ: 'Asia/Kolkata'
+      FTLCONF_webserver_api_password: 'pihole'
+      FTLCONF_dns_listeningMode: 'all' #post-configurable
+      FTLCONF_dns_upstreams: '<static ip for unbound>#53' #post-configurable
+      FTLCONF_dhcp_start: '<first assignable ip>' #post-configurable
+      FTLCONF_dhcp_end: '<last assignable ip>' #post-configurable
+      FTLCONF_dhcp_router: '<router ip>' #post-configurable
+      FTLCONF_dhcp_active: 'true' #post-configurable
+      FTLCONF_dhcp_ipv6: 'true' #post-configurable
+      DNSMASQ_USER: 'root'
+    depends_on:
+      - unbound
+    volumes:
+      - './etc-pihole:/etc/pihole'
+      - './etc-dnsmasq.d:/etc/dnsmasq.d'
+    cap_add:
+      - CHOWN
+      - NET_ADMIN
+      - NET_BIND_SERVICE
+      - NET_RAW
+      - SYS_TIME
+      - SYS_NICE
+    restart: unless-stopped
+

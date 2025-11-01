@@ -1,0 +1,21 @@
+services:
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:stable
+    container_name: homeassistant
+    platform: linux/arm64
+    hostname: homeassistant
+    networks:
+      macvlan_net:
+        ipv4_address: <static ip for jellyfin>
+    environment:
+      TZ: 'Asia/Kolkata'
+    volumes:
+      - ./config:/config
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    privileged: true
+
+
+networks:
+  macvlan_net:
+    external: true
