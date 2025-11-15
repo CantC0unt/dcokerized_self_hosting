@@ -44,7 +44,7 @@ networks:
 
 ### Install Directory
 
-The install can be done in any directory, I am going to use a new directory in home for convenience. If you choose to install somewhere else, dont forget to make the change the install directory in the other commands.
+The install can be done in any directory, I am going to use a new directory in home for convenience. If you choose to install somewhere else, dont forget to make the change for the install directory in the other commands.
 
 ```bash
 mkdir ~/dockerized_jellyfin

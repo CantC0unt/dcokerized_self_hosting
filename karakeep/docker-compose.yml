@@ -1,0 +1,52 @@
+services:
+  web:
+    image: ghcr.io/karakeep-app/karakeep:release
+    container_name: karakeep
+    hostname: karakeep
+    networks:
+      macvlan_net:
+        ipv4_address: <static ip for karakeep>
+    volumes:
+      - ./data:/data
+      - ./metrics:/metrics
+    environment:
+      PORT: 80
+      MEILI_ADDR: http://<static ip for meilisearch>:7700
+      BROWSER_WEB_URL: http://<static ip for chrome>:9222
+      NEXTAUTH_URL: http://<dns for karakeep server>
+      NEXTAUTH_SECRET: <secret string>
+      MEILI_MASTER_KEY: <secret string>
+      # OPENAI_API_KEY: ...
+      DATA_DIR: /data # DON'T CHANGE THIS
+    restart: unless-stopped
+  chrome:
+    image: gcr.io/zenika-hub/alpine-chrome:124
+    container_name: chrome
+    hostname: chrome
+    networks:
+      macvlan_net:
+        ipv4_address: <static ip for chrome>
+    command:
+      - --no-sandbox
+      - --disable-gpu
+      - --disable-dev-shm-usage
+      - --remote-debugging-address=0.0.0.0
+      - --remote-debugging-port=9222
+      - --hide-scrollbars
+    restart: unless-stopped
+  meilisearch:
+    image: getmeili/meilisearch:v1.13.3
+    container_name: meilisearch
+    hostname: meilisearch
+    networks:
+      macvlan_net:
+        ipv4_address: <static ip for meilisearch>
+    environment:
+      MEILI_NO_ANALYTICS: "true"
+    volumes:
+      - ./meilisearch:/meili_data
+    restart: unless-stopped
+
+networks:
+  macvlan_net:
+    external: true
